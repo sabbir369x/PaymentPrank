@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Payment</title>
+    <title>Secure Payment?</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,6 +24,23 @@
             transition: all 0.3s ease;
         }
         
+        /* Funny Header Style */
+        .funny-header {
+            color: #ff0000; /* লাল রং */
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px black;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
         /* Input Form Styles */
         .input-group {
             margin-bottom: 15px;
@@ -33,29 +50,38 @@
             display: block;
             margin-bottom: 5px;
             color: #555;
+            font-weight: bold;
             font-size: 14px;
         }
         input[type="text"], input[type="number"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-sizing: border-box; 
             outline: none;
+            font-size: 16px;
         }
+        input:focus {
+            border-color: #ff0000;
+        }
+
+        /* Button Style */
         .btn-primary {
-            background: #0078ff;
+            background: #ff0000;
             color: white;
             border: none;
             padding: 12px;
             width: 100%;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
+            text-transform: uppercase;
         }
         .btn-primary:hover {
-            background: #005ecb;
+            background: #cc0000;
         }
 
         /* Payment Screen Styles (Hidden Initially) */
@@ -63,11 +89,12 @@
             display: none;
         }
         .details-box {
-            background: #f9f9f9;
+            background: #fff0f0;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
             text-align: left;
+            border: 1px solid #ffcccc;
         }
         .details-box p {
             margin: 5px 0;
@@ -75,9 +102,9 @@
             font-size: 14px;
         }
         .amount-display {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #ff0000;
             margin: 10px 0;
             text-align: center;
         }
@@ -100,9 +127,10 @@
             justify-content: center;
             align-items: center;
             font-size: 14px;
-            color: #777;
+            color: #555;
             pointer-events: none;
             z-index: 1;
+            font-weight: bold;
         }
         input[type="range"] {
             -webkit-appearance: none;
@@ -119,7 +147,7 @@
             -webkit-appearance: none;
             width: 50px;
             height: 50px;
-            background: #0078ff;
+            background: #ff0000;
             border-radius: 50%;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
             transition: background 0.3s;
@@ -149,114 +177,98 @@
     <div class="container">
         
         <div id="inputScreen">
-            <h2 style="color:#333;">Payment Details</h2>
+            <h2 class="funny-header">ওয়ালেট খালি কর</h2>
             
             <div class="input-group">
                 <label>Enter your Name</label>
-                <input type="text" id="inputName" placeholder="Enter Name (e.g. Rahim)">
+                <input type="text" id="inputName" placeholder="tor nam lekh" required>
             </div>
             
             <div class="input-group">
                 <label>Student ID</label>
-                <input type="text" id="inputId" placeholder="Enter ID (e.g. 123456)">
+                <input type="text" id="inputId" placeholder="Enter ID (e.g.027232...)" required>
             </div>
 
             <div class="input-group">
                 <label>Amount (TK)</label>
-                <input type="number" id="inputAmount" placeholder="Enter Amount">
+                <input type="number" id="inputAmount" placeholder="Sob Taka Diye De" required>
             </div>
 
-            <button class="btn-primary" onclick="goToPayment()">Proceed to Pay</button>
+            <button class="btn-primary" onclick="goToPayment()">Confirm & Send</button>
         </div>
 
         <div id="paymentScreen">
-            <h3 id="displayHeader">Confirm Payment</h3>
+            <h3 id="displayHeader" style="color: #d32f2f;">Confirm Payment</h3>
             
             <div class="details-box">
-                <p><strong>To:</strong> <span id="displayName"></span></p>
-                <p><strong>ID:</strong> <span id="displayId"></span></p>
+                <p><strong>Name:</strong> <span id="displayName"></span></p>
+                <p><strong>Student ID:</strong> <span id="displayId"></span></p>
                 <div class="amount-display" id="displayAmount"></div>
             </div>
 
             <div class="slider-container" id="sliderBox">
-                <div class="slider-text">Swipe to Send >></div>
+                <div class="slider-text">Swipe to Empty Wallet >></div>
                 <input type="range" min="0" max="100" value="0" id="paymentSlider">
             </div>
 
             <div class="success-message" id="successMsg">
                 <div class="checkmark">✓</div>
-                <h3>Successful!</h3>
-                <p style="font-size: 14px; color: #666;">Transaction Completed.</p>
-                <p><strong>Paid to:</strong> <span id="finalName"></span></p>
+                <h3 style="color: #4CAF50;">Loot Successful!</h3>
+                <p style="font-size: 14px; color: #666;">Money has been transferred.</p>
+                <p><strong>Paid by:</strong> <span id="finalName"></span></p>
             </div>
         </div>
 
     </div>
 
     <script>
-        // ভেরিয়েবল ডিক্লেয়ারেশন
         const inputScreen = document.getElementById('inputScreen');
         const paymentScreen = document.getElementById('paymentScreen');
         
-        // ইনপুট ফিল্ডস
         const inputName = document.getElementById('inputName');
         const inputId = document.getElementById('inputId');
         const inputAmount = document.getElementById('inputAmount');
 
-        // ডিসপ্লে ফিল্ডস
         const displayName = document.getElementById('displayName');
         const displayId = document.getElementById('displayId');
         const displayAmount = document.getElementById('displayAmount');
         const finalName = document.getElementById('finalName');
 
-        // স্লাইডার এলিমেন্টস
         const slider = document.getElementById('paymentSlider');
         const sliderBox = document.getElementById('sliderBox');
         const successMsg = document.getElementById('successMsg');
 
-        // স্ক্রিন ১ থেকে স্ক্রিন ২ তে যাওয়ার ফাংশন
         function goToPayment() {
-            // ইনপুট ভ্যালু নেওয়া
             const name = inputName.value;
             const id = inputId.value;
             const amount = inputAmount.value;
 
-            // ভ্যালিডেশন (সব ফিল্ড পূর্ণ আছে কি না)
             if(name === "" || id === "" || amount === "") {
                 alert("Please fill all details!");
                 return;
             }
 
-            // ডেটা সেট করা
             displayName.innerText = name;
             displayId.innerText = id;
-            
-            // এখানে পরিবর্তন করা হয়েছে ($ এর বদলে TK)
             displayAmount.innerText = amount + " TK"; 
-            
             finalName.innerText = name;
 
-            // স্ক্রিন পরিবর্তন
             inputScreen.style.display = 'none';
             paymentScreen.style.display = 'block';
         }
 
-        // স্লাইডার লজিক
         slider.addEventListener('input', function() {
             const value = this.value;
-            // কালার চেঞ্জ ইফেক্ট
             this.style.background = `linear-gradient(90deg, #4CAF50 ${value}%, transparent ${value}%)`;
             
-            // ১০০% সোয়াইপ হলে
             if (value == 100) {
                 setTimeout(() => {
-                    sliderBox.style.display = 'none'; // স্লাইডার হাইড
-                    successMsg.style.display = 'block'; // সাকসেস মেসেজ শো
+                    sliderBox.style.display = 'none';
+                    successMsg.style.display = 'block';
                 }, 300);
             }
         });
 
-        // স্লাইডার ছেড়ে দিলে রিসেট হওয়া (যদি ১০০% না হয়)
         slider.addEventListener('change', function() {
             if (this.value < 100) {
                 this.value = 0;
@@ -267,7 +279,3 @@
 
 </body>
 </html>
-
-
-
-   
